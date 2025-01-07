@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { createClient } from "../../utils/supabase/client";
+import { createClient } from "@/app/utils/supabase/client";
 import { type User } from "@supabase/supabase-js";
 import Avatar from "./avatar";
 import { Button, Input, Spacer } from "@nextui-org/react";

@@ -1,3 +1,4 @@
+import { Database } from "@/app/server/repository/database/supabase-type";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 

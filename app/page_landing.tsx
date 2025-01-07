@@ -1,39 +1,7 @@
-"use client";
-
 import Image from "next/image";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerBody,
-  DrawerFooter,
-  Button,
-  useDisclosure,
-  Input,
-  Link,
-} from "@nextui-org/react";
-import {
-  EyeFilledIcon,
-  EyeSlashFilledIcon,
-  MailIcon,
-} from "@/app/components/ui/icons";
-import { useState } from "react";
+import { Button, Link } from "@nextui-org/react";
 
-export default function FullBackgroundPage() {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [isVisible, setIsVisible] = useState(false);
-  const toggleVisibility = () => setIsVisible(!isVisible);
-
-  const onSubmit = async (data: any) => {
-    try {
-      // Add your sign-up logic here
-      console.log("Email:", data.email);
-      console.log("Password:", data.password);
-    } catch (err) {
-      console.error("Error al registrar:", err);
-    }
-  };
-
+export default function HomePage() {
   return (
     <>
       <main className="min-h-screen w-full relative">
@@ -54,19 +22,15 @@ export default function FullBackgroundPage() {
         {/* Navigation */}
         <nav className="relative z-10 p-4">
           <div className="max-w-7xl mx-auto flex justify-between items-center">
-            <Image
-              src="/hops_logo.png"
-              alt="Your Logo"
-              width={190}
-              height={10}
-              className="object-contain"
-            />
+            <span>{""}</span>
             <div className="flex gap-4">
               <Button
                 className="bg-white/10 backdrop-blur-md border border-white/20 text-white 
                          hover:bg-white/20 transition-all"
                 variant="flat"
-                onPress={onOpen}
+                //onPress={onOpen}
+                href="/auth/sign-in"
+                as={Link}
               >
                 Ingresar
               </Button>
@@ -125,7 +89,8 @@ export default function FullBackgroundPage() {
           </div>
         </footer>
       </main>
-      <Drawer isOpen={isOpen} onOpenChange={onOpenChange}>
+
+      {/*<Drawer isOpen={isOpen} onOpenChange={onOpenChange}>
         <DrawerContent>
           {(onClose) => (
             <>
@@ -166,12 +131,18 @@ export default function FullBackgroundPage() {
                     }
                   />
 
-                  <Button type="submit" color="primary" className="w-full">
+                  {error && <p className="text-warning">{error}</p>}
+                  <Button
+                    type="submit"
+                    color="primary"
+                    className="w-full"
+                    isLoading={isLoading}
+                  >
                     Ingresar
                   </Button>
                 </form>
                 <div className="flex py-2 px-1 justify-between">
-                  <Link color="primary" href="#" size="sm">
+                  <Link color="primary" href="/auth/forgot-password" size="sm">
                     Olvidaste tu contraseña?
                   </Link>
                 </div>
@@ -184,7 +155,7 @@ export default function FullBackgroundPage() {
             </>
           )}
         </DrawerContent>
-      </Drawer>
+      </Drawer>*/}
     </>
   );
 }

@@ -11,8 +11,9 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
 import NextImage from "next/image";
-import { handleGoogleSignUp, signInAction } from "../actions";
+import { handleGoogleSignUp, signInAction } from "@/app/auth/actions";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/app/store/authStore";
 
 const motivationalPhrases = [
   "Plataforma para gestionar tus entrenaientos y potenciar tu academia",
@@ -34,6 +35,8 @@ const schema = yup.object().shape({
 export type FormCredentialData = yup.InferType<typeof schema>;
 
 export default function SignInPage() {
+  const loginUser = useAuthStore((state) => state.signIn);
+
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -50,21 +53,15 @@ export default function SignInPage() {
   const onSubmit = async (data: FormCredentialData) => {
     try {
       setIsLoading(true);
-      const formData = new FormData();
-      formData.append("email", data.email);
-      formData.append("password", data.password);
-      const response = await signInAction(formData);
-
-      if (response.error) {
-        setError(response.error);
+      setError(null);
+      try {
+        await loginUser(data.email, data.password);
+        router.push("/");
+      } catch (error) {
+        setError((error as any)?.message);
       }
-
-      if (response.success) {
-        router.push("/sport");
-      }
-    } catch (err: any) {
-      console.error("Error al registrar:", err);
-      setError(err?.message ?? "Error desconocido");
+    } catch (err: unknown) {
+      setError((err as Error)?.message ?? "Error desconocido");
     } finally {
       setIsLoading(false);
     }
@@ -108,11 +105,12 @@ export default function SignInPage() {
             isBlurred
             radius="md"
             as={NextImage}
+            priority
           />
         </div>
         <div className="w-full max-w-md">
           <h2 className="text-3xl font-bold mb-6">Inicia sesión</h2>
-          <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+          <form className="space-y-4 " onSubmit={handleSubmit(onSubmit)}>
             <Input
               label="Email"
               placeholder="Ingresa tu Email"
@@ -152,7 +150,7 @@ export default function SignInPage() {
               }
             />
 
-            {error && <p className="text-danger">{error}</p>}
+            {error && <p className="text-warning">{error}</p>}
 
             <Button
               type="submit"
@@ -164,19 +162,21 @@ export default function SignInPage() {
             </Button>
           </form>
 
-          {/* Social Login */}
           <div className="mt-8">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-700"></div>
               </div>
+              {/*
               <div className="relative flex justify-center text-sm">
                 <span className="bg-gray-900 px-4 text-gray-400">
                   O inicia sesión con
                 </span>
               </div>
+              */}
             </div>
-
+            {/* Social Login Buttons
+         
             <div className="mt-6 flex justify-center gap-4">
               <Button
                 onPress={handleSingInWithGoogle}
@@ -209,6 +209,7 @@ export default function SignInPage() {
                 <span className="text-sm text-gray-300">Facebook</span>
               </button>
             </div>
+    */}
           </div>
         </div>
         <div className="mt-4 flex w-full flex-row gap-5 items-center justify-center">
@@ -218,12 +219,6 @@ export default function SignInPage() {
               className="font-semibold  text-primary "
             >
               ¿Olvidaste tu contraseña?
-            </Link>
-          </p>
-          <p className="text-center text-sm text-gray-600">
-            No tienes una cuenta?{" "}
-            <Link href="/auth/sign-up" className="font-semibold text-primary">
-              Crea una aquí
             </Link>
           </p>
         </div>
